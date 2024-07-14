@@ -1,0 +1,180 @@
+:root {
+	font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+	line-height: 1.5;
+	font-weight: 400;
+
+	color-scheme: light dark;
+	color: rgba(255, 255, 255, 0.87);
+	background-color: #242424;
+
+	font-synthesis: none;
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+a {
+	font-weight: 500;
+	color: #646cff;
+	text-decoration: inherit;
+}
+a:hover {
+	color: #535bf2;
+}
+
+body {
+	margin: 0;
+	display: flex;
+	place-items: center;
+	min-width: 320px;
+	min-height: 100vh;
+}
+
+h1 {
+	font-size: 3.2em;
+	line-height: 1.1;
+}
+
+button {
+	border-radius: 8px;
+	border: 1px solid transparent;
+	padding: 0.6em 1.2em;
+	font-size: 1em;
+	font-weight: 500;
+	font-family: inherit;
+	background-color: #1a1a1a;
+	cursor: pointer;
+	transition: border-color 0.25s;
+}
+button:hover {
+	border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+	outline: 4px auto -webkit-focus-ring-color;
+}
+
+@media (prefers-color-scheme: light) {
+	:root {
+		color: #213547;
+		background-color: #ffffff;
+	}
+	a:hover {
+		color: #747bff;
+	}
+	button {
+		background-color: #f9f9f9;
+	}
+}
+
+.App {
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+}
+
+form {
+	display: flex;
+	justify-content: center;
+	gap: 1rem;
+}
+
+header {
+	background-color: #213547;
+	padding: 3rem 0;
+	width: 100vw;
+
+	@media (min-width: 800px) {
+		width: 50vw;
+	}
+}
+
+.weather {
+	display: flex;
+	justify-content: space-around;
+	gap: 3rem;
+	align-items: center;
+	flex-direction: column;
+
+	@media (min-width: 800px) {
+		flex-direction: row;
+		margin-top: 2rem;
+	}
+}
+
+.overview {
+	background-color: #1a1a1a;
+	/* padding: 1rem 2rem; */
+	width: 100%;
+
+	@media (min-width: 800px) {
+		width: 50%;
+	}
+}
+
+.locationInfo {
+	font-size: 3rem;
+}
+
+.weatherIcon {
+	width: 120px;
+}
+
+.temperatureInfo {
+	font-size: 2rem;
+}
+
+.lds-dual-ring,
+.lds-dual-ring:after {
+	box-sizing: border-box;
+}
+.lds-dual-ring {
+	display: inline-block;
+	width: 80px;
+	height: 80px;
+}
+.lds-dual-ring:after {
+	content: " ";
+	display: block;
+	width: 64px;
+	height: 64px;
+	margin: 8px;
+	border-radius: 50%;
+	border: 6.4px solid currentColor;
+	border-color: currentColor transparent currentColor transparent;
+	animation: lds-dual-ring 1.2s linear infinite;
+}
+@keyframes lds-dual-ring {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+.overviewLocation {
+	display: flex;
+	flex-direction: column;
+}
+
+.locationInfo {
+	/* padding: 1rem; */
+}
+
+.li-name {
+	font-size: 3rem;
+	line-height: 1;
+}
+
+.stateAndCountry {
+	display: flex;
+	color: cadetblue;
+	justify-content: center;
+	font-size: 1rem;
+}
+
+.stateAndCountry > * {
+	font-size: 1rem;
+	margin-top: -1rem;
+}
