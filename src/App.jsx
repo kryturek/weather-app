@@ -4,6 +4,30 @@ import viteLogo from "/vite.svg";
 import "./App.css";
 import { Link } from "react-router-dom";
 
+function convertTimestamptoTime(unixTimestamp, timezone) {
+	// Convert to milliseconds and
+	// then create a new Date object
+	let dateObj = new Date((unixTimestamp + timezone) * 1000);
+
+	// Get hours from the timestamp
+	let hours = dateObj.getUTCHours();
+
+	// Get minutes part from the timestamp
+	let minutes = dateObj.getUTCMinutes();
+
+	// Get seconds part from the timestamp
+	let seconds = dateObj.getUTCSeconds();
+
+	let formattedTime =
+		hours.toString().padStart(2, "0") +
+		":" +
+		minutes.toString().padStart(2, "0") +
+		":" +
+		seconds.toString().padStart(2, "0");
+
+	return formattedTime;
+}
+
 function App() {
 	const api = {
 		key: "fa7fce5a165ee9ae4a181a41305fd2a6",
@@ -47,7 +71,7 @@ function App() {
 	return (
 		<div className="App">
 			<header>
-				<h1>Weather App 2</h1>
+				<h1>Weather App</h1>
 				<form>
 					<input
 						type="text"
@@ -93,9 +117,29 @@ function App() {
 						</p>
 					</div>
 					<div className="info">
+						<div className="geo">
+							<p>Latitude: {Math.round(geoData[0].lat * 100) / 100}</p>
+							<p>Longitude: {Math.round(geoData[0].lon * 100) / 100}</p>
+						</div>
 						<p>Feels like {Math.round(weather.main.feels_like)}°C</p>
-						<p>{weather.weather[0].main}</p>
-						<p>({weather.weather[0].description})</p>
+						<p>
+							{weather.weather[0].main} ({weather.weather[0].description}
+							)
+						</p>
+						<p>
+							Sunset:{" "}
+							{convertTimestamptoTime(
+								weather.sys.sunset,
+								weather.timezone
+							)}
+						</p>
+						<p>
+							Sunrise:{" "}
+							{convertTimestamptoTime(
+								weather.sys.sunrise,
+								weather.timezone
+							)}
+						</p>
 					</div>
 				</div>
 			) : (

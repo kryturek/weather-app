@@ -85,16 +85,16 @@ header {
 	width: 100vw;
 
 	@media (min-width: 800px) {
-		width: 50vw;
+		width: min(70vw, 1000px);
 	}
 }
 
 .weather {
 	display: flex;
-	justify-content: space-around;
-	gap: 3rem;
+	justify-content: center;
 	align-items: center;
 	flex-direction: column;
+	/* height: 20rem; */
 
 	@media (min-width: 800px) {
 		flex-direction: row;
@@ -108,7 +108,7 @@ header {
 	width: 100%;
 
 	@media (min-width: 800px) {
-		width: 50%;
+		/* width: 50%; */
 	}
 }
 
@@ -177,4 +177,30 @@ header {
 .stateAndCountry > * {
 	font-size: 1rem;
 	margin-top: -1rem;
+}
+
+.info {
+	display: flex;
+	flex-direction: column;
+	/* background-color: #f9f9f9; */
+	color: white;
+	height: 100%;
+	flex-grow: 1;
+	padding-inline: 3rem;
+
+	@media (min-width: 800px) {
+		align-items: flex-end;
+		width: 70%;
+		border-right: #213547 2px solid;
+	}
+}
+
+.geo {
+	display: flex;
+	flex-direction: column;
+	/* border-bottom: #f9f9f9 4px dashed; */
+
+	@media (min-width: 800px) {
+		align-items: flex-end;
+	}
 }
