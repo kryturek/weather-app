@@ -30,7 +30,7 @@ function convertTimestamptoTime(unixTimestamp, timezone) {
 
 function App() {
 	const api = {
-		key: "fa7fce5a165ee9ae4a181a41305fd2a6",
+		key: import.meta.env.VITE_WEATHER_API_KEY,
 		baseurlgeo: "https://api.openweathermap.org/geo/1.0/direct?",
 		baseurlweather: "https://api.openweathermap.org/data/2.5/weather?",
 	};
