@@ -120,7 +120,7 @@ function App() {
 			</header>
 
 			{loading ? (
-				<div className="weather">
+				<div className="weather weatherLoading">
 					<div className="lds-dual-ring"></div>
 				</div>
 			) : error ? (
