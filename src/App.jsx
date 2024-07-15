@@ -1,21 +1,10 @@
 import { useEffect, useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
 import "./App.css";
-import { Link } from "react-router-dom";
 
 function convertTimestamptoTime(unixTimestamp, timezone) {
-	// Convert to milliseconds and
-	// then create a new Date object
 	let dateObj = new Date((unixTimestamp + timezone) * 1000);
-
-	// Get hours from the timestamp
 	let hours = dateObj.getUTCHours();
-
-	// Get minutes part from the timestamp
 	let minutes = dateObj.getUTCMinutes();
-
-	// Get seconds part from the timestamp
 	let seconds = dateObj.getUTCSeconds();
 
 	let formattedTime =
@@ -36,67 +25,107 @@ function App() {
 	};
 
 	const [location, setLocation] = useState("");
-	const [geoData, setGeoData] = useState({});
+	const [geoData, setGeoData] = useState([]);
 	const [weather, setWeather] = useState({});
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
+	const [input, setInput] = useState("");
+	const [lastSearched, setLastSearched] = useState(
+		sessionStorage.getItem("lastSearched") || ""
+	);
 
-	function processLocation(ev) {
-		ev.preventDefault();
+	function processLocation(ev, loc) {
+		if (ev) ev.preventDefault();
+		const searchLocation = loc || input;
 		setLoading(true);
 		setError(null);
-		if (weather.name != undefined) {
-			sessionStorage.setItem("lastSearched", weather.name);
-		}
-		// sessionStorage.removeItem("lastSearched");
-		fetch(`${api.baseurlgeo}q=${location}&limit=1&appid=${api.key}`)
+		setWeather({});
+		setGeoData([]);
+
+		fetch(`${api.baseurlgeo}q=${searchLocation}&limit=1&appid=${api.key}`)
 			.then((res) => res.json())
 			.then((data) => {
-				setGeoData(data);
+				if (data.length === 0) {
+					setError("Location was not found");
+					setLoading(false);
+					return;
+				} else {
+					setGeoData(data);
+				}
+			})
+			.catch((error) => {
+				setError("An error occurred while fetching geo data");
+				setLoading(false);
 			});
 
-		fetch(`${api.baseurlweather}q=${location}&units=metric&appid=${api.key}`)
+		fetch(
+			`${api.baseurlweather}q=${searchLocation}&units=metric&appid=${api.key}`
+		)
 			.then((res) => res.json())
 			.then((data) => {
-				if (data.cod == "404") {
-					setError(`${location} not found!`);
+				if (data.cod === "404") {
+					setError(`${searchLocation} not found!`);
+					setWeather({});
 				} else {
 					setWeather(data);
+					if (weather.name !== searchLocation) {
+						setLastSearched(location); // Set last searched to the previous successful search
+						sessionStorage.setItem("lastSearched", location);
+					}
+					setLocation(searchLocation);
 				}
 				setLoading(false);
+				setInput("");
 			})
-			.catch(setLoading(false));
+			.catch((error) => {
+				setError("An error occurred while fetching weather data");
+				setLoading(false);
+			});
+	}
+
+	function handleLastSearchedClick(lastSearchedLocation) {
+		setInput(lastSearchedLocation);
+		processLocation(undefined, lastSearchedLocation);
 	}
 
 	return (
 		<div className="App">
 			<header>
 				<h1>Weather App</h1>
-				<form>
+				<form onSubmit={processLocation}>
 					<input
 						type="text"
 						placeholder="enter location!"
-						value={location}
-						onChange={(ev) => setLocation(ev.target.value)}
+						value={input}
+						onChange={(ev) => setInput(ev.target.value)}
 					/>
-					<button onClick={processLocation}>Search</button>
+					<button type="submit">Search</button>
 				</form>
 
-				{sessionStorage.getItem("lastSearched") ? (
-					<span className="lastSearched">
-						Last searched: {sessionStorage.getItem("lastSearched")}
-					</span>
-				) : (
-					""
-				)}
-				{/* <p>Last searched: {sessionStorage.getItem("lastSearched")}</p> */}
+				<div className="lastSearchedDiv">
+					{lastSearched ? (
+						<span className="lastSearched">
+							Last searched:{" "}
+							<a
+								href="#"
+								onClick={() => handleLastSearchedClick(lastSearched)}
+							>
+								{lastSearched}
+							</a>
+						</span>
+					) : (
+						""
+					)}
+				</div>
 			</header>
 
 			{loading ? (
-				<div class="lds-dual-ring"></div>
+				<div className="weather">
+					<div className="lds-dual-ring"></div>
+				</div>
 			) : error ? (
 				<p>{error}</p>
-			) : weather.main ? (
+			) : weather.main && geoData[0] ? (
 				<div className="weather">
 					<div className="overview">
 						<div className="overviewLocation">
