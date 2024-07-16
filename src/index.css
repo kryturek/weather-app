@@ -158,10 +158,6 @@ header {
 	flex-direction: column;
 }
 
-.locationInfo {
-	/* padding: 1rem; */
-}
-
 .li-name {
 	font-size: 3rem;
 	line-height: 1;
