@@ -1,5 +1,12 @@
 import { useEffect, useState } from "react";
+import {
+	GoogleMap,
+	LoadScript,
+	Marker,
+	useJsApiLoader,
+} from "@react-google-maps/api";
 import "./App.css";
+import { mapStyles } from "./mapStyles";
 
 function convertTimestamptoTime(unixTimestamp, timezone) {
 	let dateObj = new Date((unixTimestamp + timezone) * 1000);
@@ -69,7 +76,7 @@ function App() {
 				} else {
 					setWeather(data);
 					if (weather.name !== searchLocation) {
-						setLastSearched(location); // Set last searched to the previous successful search
+						setLastSearched(location);
 						sessionStorage.setItem("lastSearched", location);
 					}
 					setLocation(searchLocation);
@@ -87,6 +94,20 @@ function App() {
 		setInput(lastSearchedLocation);
 		processLocation(undefined, lastSearchedLocation);
 	}
+
+	// const loadMapMarker = (map) => {
+	// 	const { lat, lon: lng } = geoData[0];
+	// 	new google.maps.marker.AdvancedMarkerElement({
+	// 		map,
+	// 		position: { lat, lng },
+	// 		title: geoData[0].name,
+	// 	});
+	// };
+
+	const { isLoaded } = useJsApiLoader({
+		id: "google-map-script",
+		googleMapsApiKey: "AIzaSyCaHkxMTw348CdcMNx6DjhszlHn1M7x3-8",
+	});
 
 	return (
 		<div className="App">
@@ -170,6 +191,27 @@ function App() {
 							)}
 						</p>
 					</div>
+					{isLoaded && (
+						<GoogleMap
+							key={`${geoData[0].lat}-${geoData[0].lon}`}
+							mapContainerStyle={{ height: "400px", width: "100%" }}
+							center={{ lat: geoData[0].lat, lng: geoData[0].lon }}
+							zoom={10}
+							options={{
+								styles: mapStyles,
+								disableDefaultUI: true,
+							}}
+						>
+							<Marker
+								position={{
+									lat: geoData[0].lat,
+									lng: geoData[0].lon,
+								}}
+								visible={true}
+								zIndex={100}
+							/>
+						</GoogleMap>
+					)}
 				</div>
 			) : (
 				<p></p>
