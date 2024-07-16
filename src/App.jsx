@@ -110,6 +110,20 @@ function App() {
 		googleMapsApiKey: api.mapsKey,
 	});
 
+	function getDynamicFontSize(str) {
+		const smolSize = 24;
+		const midSize = 36;
+		const maxSize = 48;
+
+		if (str.length <= 10) {
+			return `${maxSize}px`;
+		} else if (str.length <= 18) {
+			return `${midSize}px`;
+		} else {
+			return `${smolSize}px`;
+		}
+	}
+
 	return (
 		<div className="App">
 			<header>
@@ -151,7 +165,14 @@ function App() {
 				<div className="weather">
 					<div className="overview">
 						<div className="overviewLocation">
-							<p className="locationInfo li-name">{geoData[0].name}</p>
+							<p
+								className="locationInfo li-name"
+								style={{
+									fontSize: getDynamicFontSize(geoData[0].name),
+								}}
+							>
+								{geoData[0].name}
+							</p>
 							<div className="stateAndCountry">
 								<p className="locationInfo">
 									{geoData[0].state}, {geoData[0].country}
