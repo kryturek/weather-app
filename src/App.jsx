@@ -27,6 +27,7 @@ function convertTimestamptoTime(unixTimestamp, timezone) {
 function App() {
 	const api = {
 		key: import.meta.env.VITE_WEATHER_API_KEY,
+		mapsKey: import.meta.env.VITE_GOOGLE_MAPS_API,
 		baseurlgeo: "https://api.openweathermap.org/geo/1.0/direct?",
 		baseurlweather: "https://api.openweathermap.org/data/2.5/weather?",
 	};
@@ -106,7 +107,7 @@ function App() {
 
 	const { isLoaded } = useJsApiLoader({
 		id: "google-map-script",
-		googleMapsApiKey: "AIzaSyCaHkxMTw348CdcMNx6DjhszlHn1M7x3-8",
+		googleMapsApiKey: api.mapsKey,
 	});
 
 	return (
