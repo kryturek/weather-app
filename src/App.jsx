@@ -53,10 +53,39 @@ function App() {
 	const inputRef = useRef();
 
 	useEffect(() => {
-		if (inputRef.current) {
-			inputRef.current.focus();
+		if (autocomplete) {
+			autocomplete.addListener("place_changed", handlePlaceChanged);
 		}
-	});
+	}, [autocomplete]);
+
+	function handleKeyDown(event) {
+		if (event.key === "Enter") {
+			event.preventDefault();
+			if (autocomplete) {
+				handlePlaceChanged();
+			}
+		}
+	}
+
+	const handlePlaceChanged = () => {
+		const place = autocomplete.getPlace();
+		if (place && place.geometry) {
+			const lat = place.geometry.location.lat();
+			const lon = place.geometry.location.lng();
+			const country = getAddressComponent(
+				place.address_components,
+				"country"
+			);
+			const state = getAddressComponent(
+				place.address_components,
+				"administrative_area_level_1"
+			);
+			setLocation(place.name);
+			setCountry(country);
+			setState(state);
+			fetchWeatherData(lat, lon, place.name);
+		}
+	};
 
 	function processLocation(ev, loc, fromHistory = false) {
 		if (ev) ev.preventDefault();
@@ -219,7 +248,9 @@ function App() {
 								{location}
 							</p>
 							<div className="stateAndCountry">
-								<p className="locationInfo">{weather.sys.country}</p>
+								<p className="locationInfo">
+									{state}, {country}
+								</p>
 							</div>
 						</div>
 						<img
