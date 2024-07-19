@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
 	GoogleMap,
 	LoadScript,
 	Marker,
 	useJsApiLoader,
+	Autocomplete,
 } from "@react-google-maps/api";
 import "./App.css";
 import { mapStyles } from "./mapStyles";
@@ -24,6 +25,11 @@ function convertTimestamptoTime(unixTimestamp, timezone) {
 	return formattedTime;
 }
 
+function getAddressComponent(components, type) {
+	const component = components.find((c) => c.types.includes(type));
+	return component ? component.long_name : "";
+}
+
 function App() {
 	const api = {
 		key: import.meta.env.VITE_WEATHER_API_KEY,
@@ -33,7 +39,8 @@ function App() {
 	};
 
 	const [location, setLocation] = useState("");
-	const [geoData, setGeoData] = useState([]);
+	const [state, setState] = useState("");
+	const [country, setCountry] = useState("");
 	const [weather, setWeather] = useState({});
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
@@ -41,46 +48,69 @@ function App() {
 	const [lastSearched, setLastSearched] = useState(
 		sessionStorage.getItem("lastSearched") || ""
 	);
+	const [autocomplete, setAutocomplete] = useState(null);
 
-	function processLocation(ev, loc) {
+	const inputRef = useRef();
+
+	useEffect(() => {
+		if (inputRef.current) {
+			inputRef.current.focus();
+		}
+	});
+
+	function processLocation(ev, loc, fromHistory = false) {
 		if (ev) ev.preventDefault();
 		const searchLocation = loc || input;
 		setLoading(true);
 		setError(null);
 		setWeather({});
-		setGeoData([]);
+		setLocation("");
+		setState("");
+		setCountry("");
 
-		fetch(`${api.baseurlgeo}q=${searchLocation}&limit=1&appid=${api.key}`)
-			.then((res) => res.json())
-			.then((data) => {
-				if (data.length === 0) {
-					setError("Location was not found");
-					setLoading(false);
-					return;
-				} else {
-					setGeoData(data);
-				}
-			})
-			.catch((error) => {
-				setError("An error occurred while fetching geo data");
+		if (autocomplete) {
+			const place = autocomplete.getPlace();
+			if (place && place.geometry) {
+				const lat = place.geometry.location.lat();
+				const lng = place.geometry.location.lng();
+				const country = getAddressComponent(
+					place.address_components,
+					"country"
+				);
+				const state = getAddressComponent(
+					place.address_components,
+					"administrative_area_level_1"
+				);
+				setInput("");
+				setCountry(country);
+				setState(state);
+				fetchWeatherData(lat, lng, place.name);
+			} else {
+				setError("Location was not found!");
 				setLoading(false);
-			});
+			}
+		} else {
+			setError("Autocomplete not initialized");
+			setLoading(false);
+		}
+	}
 
+	function fetchWeatherData(lat, lon, locationName) {
 		fetch(
-			`${api.baseurlweather}q=${searchLocation}&units=metric&appid=${api.key}`
+			`${api.baseurlweather}lat=${lat}&lon=${lon}&units=metric&appid=${api.key}`
 		)
 			.then((res) => res.json())
 			.then((data) => {
 				if (data.cod === "404") {
-					setError(`${searchLocation} not found!`);
+					setError(`${locationName} not found!`);
 					setWeather({});
 				} else {
 					setWeather(data);
-					if (weather.name !== searchLocation) {
-						setLastSearched(location);
-						sessionStorage.setItem("lastSearched", location);
+					if (weather.name !== locationName) {
+						setLastSearched(locationName);
+						sessionStorage.setItem("lastSearched", locationName);
 					}
-					setLocation(searchLocation);
+					setLocation(locationName);
 				}
 				setLoading(false);
 				setInput("");
@@ -108,7 +138,12 @@ function App() {
 	const { isLoaded } = useJsApiLoader({
 		id: "google-map-script",
 		googleMapsApiKey: api.mapsKey,
+		libraries: ["places"],
 	});
+
+	const onLoad = (autocompleteInstance) => {
+		setAutocomplete(autocompleteInstance);
+	};
 
 	function getDynamicFontSize(str) {
 		const smolSize = 24;
@@ -129,12 +164,22 @@ function App() {
 			<header>
 				<h1>Weather App</h1>
 				<form onSubmit={processLocation}>
-					<input
-						type="text"
-						placeholder="enter location!"
-						value={input}
-						onChange={(ev) => setInput(ev.target.value)}
-					/>
+					{isLoaded && (
+						<Autocomplete
+							onLoad={onLoad}
+							options={{
+								types: ["(cities)"],
+							}}
+						>
+							<input
+								ref={inputRef}
+								type="text"
+								placeholder="enter location!"
+								value={input}
+								onChange={(ev) => setInput(ev.target.value)}
+							/>
+						</Autocomplete>
+					)}
 					<button type="submit">Search</button>
 				</form>
 
@@ -161,27 +206,26 @@ function App() {
 				</div>
 			) : error ? (
 				<p>{error}</p>
-			) : weather.main && geoData[0] ? (
+			) : weather.main ? (
 				<div className="weather">
 					<div className="overview">
 						<div className="overviewLocation">
 							<p
 								className="locationInfo li-name"
 								style={{
-									fontSize: getDynamicFontSize(geoData[0].name),
+									fontSize: getDynamicFontSize(location),
 								}}
 							>
-								{geoData[0].name}
+								{location}
 							</p>
 							<div className="stateAndCountry">
-								<p className="locationInfo">
-									{geoData[0].state}, {geoData[0].country}
-								</p>
+								<p className="locationInfo">{weather.sys.country}</p>
 							</div>
 						</div>
 						<img
 							className="weatherIcon"
-							src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`}
+							// src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`}
+							src={`/icons/${weather.weather[0].icon}.png`}
 							alt=""
 						/>
 						<p className="temperatureInfo">
@@ -190,14 +234,19 @@ function App() {
 					</div>
 					<div className="info">
 						<div className="geo">
-							<p>Latitude: {Math.round(geoData[0].lat * 100) / 100}</p>
-							<p>Longitude: {Math.round(geoData[0].lon * 100) / 100}</p>
+							<p>
+								Latitude: {Math.round(weather.coord.lat * 100) / 100}
+							</p>
+							<p>
+								Longitude: {Math.round(weather.coord.lon * 100) / 100}
+							</p>
 						</div>
 						<p>Feels like {Math.round(weather.main.feels_like)}°C</p>
 						<p>
 							{weather.weather[0].main} ({weather.weather[0].description}
 							)
 						</p>
+						<p>Current time: {convertTimestamptoTime(weather.dt, 0)}</p>
 						<p>
 							Sunset:{" "}
 							{convertTimestamptoTime(
@@ -215,9 +264,9 @@ function App() {
 					</div>
 					{isLoaded && (
 						<GoogleMap
-							key={`${geoData[0].lat}-${geoData[0].lon}`}
+							key={`${weather.coord.lat}-${weather.coord.lon}`}
 							mapContainerStyle={{ height: "400px", width: "100%" }}
-							center={{ lat: geoData[0].lat, lng: geoData[0].lon }}
+							center={{ lat: weather.coord.lat, lng: weather.coord.lon }}
 							zoom={10}
 							options={{
 								styles: mapStyles,
@@ -226,8 +275,8 @@ function App() {
 						>
 							<Marker
 								position={{
-									lat: geoData[0].lat,
-									lng: geoData[0].lon,
+									lat: weather.coord.lat,
+									lng: weather.coord.lon,
 								}}
 								visible={true}
 								zIndex={100}
