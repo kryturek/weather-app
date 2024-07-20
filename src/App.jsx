@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import {
 	GoogleMap,
-	LoadScript,
 	Marker,
 	useJsApiLoader,
 	Autocomplete,
@@ -45,10 +44,8 @@ function App() {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
 	const [input, setInput] = useState("");
-	const [lastSearched, setLastSearched] = useState(
-		sessionStorage.getItem("lastSearched") || ""
-	);
 	const [autocomplete, setAutocomplete] = useState(null);
+	const [arrayOfSearches, setArrayOfSearches] = useState([]);
 
 	const inputRef = useRef();
 
@@ -84,12 +81,22 @@ function App() {
 			setCountry(country);
 			setState(state);
 			fetchWeatherData(lat, lon, place.name);
+
+			setArrayOfSearches((prevArray) => {
+				const newArray = [
+					{ place: place.name, country, lat, lon },
+					...prevArray,
+				];
+				if (newArray.length > 3) {
+					newArray.pop();
+				}
+				return newArray;
+			});
 		}
 	};
 
-	function processLocation(ev, loc, fromHistory = false) {
+	function processLocation(ev, loc) {
 		if (ev) ev.preventDefault();
-		const searchLocation = loc || input;
 		setLoading(true);
 		setError(null);
 		setWeather({});
@@ -100,20 +107,7 @@ function App() {
 		if (autocomplete) {
 			const place = autocomplete.getPlace();
 			if (place && place.geometry) {
-				const lat = place.geometry.location.lat();
-				const lng = place.geometry.location.lng();
-				const country = getAddressComponent(
-					place.address_components,
-					"country"
-				);
-				const state = getAddressComponent(
-					place.address_components,
-					"administrative_area_level_1"
-				);
-				setInput("");
-				setCountry(country);
-				setState(state);
-				fetchWeatherData(lat, lng, place.name);
+				handlePlaceChanged();
 			} else {
 				setError("Location was not found!");
 				setLoading(false);
@@ -135,10 +129,6 @@ function App() {
 					setWeather({});
 				} else {
 					setWeather(data);
-					if (weather.name !== locationName) {
-						setLastSearched(locationName);
-						sessionStorage.setItem("lastSearched", locationName);
-					}
 					setLocation(locationName);
 				}
 				setLoading(false);
@@ -149,20 +139,6 @@ function App() {
 				setLoading(false);
 			});
 	}
-
-	function handleLastSearchedClick(lastSearchedLocation) {
-		setInput(lastSearchedLocation);
-		processLocation(undefined, lastSearchedLocation);
-	}
-
-	// const loadMapMarker = (map) => {
-	// 	const { lat, lon: lng } = geoData[0];
-	// 	new google.maps.marker.AdvancedMarkerElement({
-	// 		map,
-	// 		position: { lat, lng },
-	// 		title: geoData[0].name,
-	// 	});
-	// };
 
 	const { isLoaded } = useJsApiLoader({
 		id: "google-map-script",
@@ -206,27 +182,33 @@ function App() {
 								placeholder="enter location!"
 								value={input}
 								onChange={(ev) => setInput(ev.target.value)}
+								onKeyDown={handleKeyDown}
 							/>
 						</Autocomplete>
 					)}
 					<button type="submit">Search</button>
 				</form>
 
-				<div className="lastSearchedDiv">
-					{lastSearched ? (
+				{/* <div className="lastSearchedDiv">
+					{arrayOfSearches.length > 1 && (
 						<span className="lastSearched">
-							Last searched:{" "}
-							<a
-								href="#"
-								onClick={() => handleLastSearchedClick(lastSearched)}
-							>
-								{lastSearched}
-							</a>
+							Previous searches:{" "}
+							{arrayOfSearches.slice(1, 3).map((search, index) => (
+								<span key={index}>
+									{index > 0 && ", "}
+									<a
+										href="#"
+										onClick={() =>
+											processLocation(undefined, search.place)
+										}
+									>
+										{search.place}
+									</a>
+								</span>
+							))}
 						</span>
-					) : (
-						""
 					)}
-				</div>
+				</div> */}
 			</header>
 
 			{loading ? (
@@ -255,7 +237,6 @@ function App() {
 						</div>
 						<img
 							className="weatherIcon"
-							// src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`}
 							src={`/icons/${weather.weather[0].icon}.png`}
 							alt=""
 						/>
