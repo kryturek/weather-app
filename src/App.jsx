@@ -45,7 +45,7 @@ function App() {
 	const [error, setError] = useState(null);
 	const [input, setInput] = useState("");
 	const [autocomplete, setAutocomplete] = useState(null);
-	const [arrayOfSearches, setArrayOfSearches] = useState([]);
+	// const [arrayOfSearches, setArrayOfSearches] = useState([]);
 
 	const inputRef = useRef();
 
@@ -229,6 +229,7 @@ function App() {
 							>
 								{location}
 							</p>
+
 							<div className="stateAndCountry">
 								<p className="locationInfo">
 									{state}, {country}
@@ -247,10 +248,16 @@ function App() {
 					<div className="info">
 						<div className="geo">
 							<p>
-								Latitude: {Math.round(weather.coord.lat * 100) / 100}
+								{`${Math.abs(
+									Math.round(weather.coord.lat * 100) / 100
+								)}`}
+								{weather.coord.lat >= 0 ? "°N" : "°S"}
 							</p>
 							<p>
-								Longitude: {Math.round(weather.coord.lon * 100) / 100}
+								{`${Math.abs(
+									Math.round(weather.coord.lon * 100) / 100
+								)}`}
+								{weather.coord.lat >= 0 ? "°E" : "°W"}
 							</p>
 						</div>
 						<p>Feels like {Math.round(weather.main.feels_like)}°C</p>
@@ -258,7 +265,10 @@ function App() {
 							{weather.weather[0].main} ({weather.weather[0].description}
 							)
 						</p>
-						<p>Current time: {convertTimestamptoTime(weather.dt, 0)}</p>
+						<p>
+							Current time:{" "}
+							{convertTimestamptoTime(weather.dt, weather.timezone)}
+						</p>
 						<p>
 							Sunset:{" "}
 							{convertTimestamptoTime(

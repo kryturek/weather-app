@@ -208,6 +208,7 @@ header {
 	justify-content: space-evenly;
 	background-color: #2032416e;
 	width: 100%;
+	line-height: 1;
 
 	@media (min-width: 800px) {
 		padding-inline: 3rem;
@@ -220,10 +221,18 @@ header {
 
 .geo {
 	display: flex;
-	flex-direction: column;
-	/* border-bottom: #f9f9f9 4px dashed; */
+	/* flex-direction: column; */
+	border-bottom: #f9f9f946 2px solid;
+	font-size: 1.2rem;
+	justify-content: flex-end;
+	align-items: end;
+	color: #ddd;
+	gap: 1rem;
+	margin: 1rem auto;
+	padding-inline: 1rem;
 
 	@media (min-width: 800px) {
+		border: #f9f9f946 2px solid;
 		align-items: flex-end;
 	}
 }
