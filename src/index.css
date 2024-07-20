@@ -205,14 +205,15 @@ header {
 	color: white;
 	height: 100%;
 	flex-grow: 1;
-	padding-inline: 3rem;
 	justify-content: space-evenly;
+	background-color: #2032416e;
+	width: 100%;
 
 	@media (min-width: 800px) {
+		padding-inline: 3rem;
 		align-items: flex-end;
 		width: 70%;
 		height: 400px;
-		background-color: #2135476e;
 		/* border-right: #213547 2px solid; */
 	}
 }
