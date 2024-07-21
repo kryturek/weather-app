@@ -54,19 +54,6 @@ button:focus-visible {
 	outline: 4px auto -webkit-focus-ring-color;
 }
 
-@media (prefers-color-scheme: light) {
-	:root {
-		color: #213547;
-		background-color: #ffffff;
-	}
-	a:hover {
-		color: #747bff;
-	}
-	button {
-		background-color: #f9f9f9;
-	}
-}
-
 .App {
 	display: flex;
 	flex-direction: column;
@@ -251,4 +238,33 @@ header {
 	justify-content: center;
 	align-items: center;
 	padding-top: 8rem;
+}
+
+@media (prefers-color-scheme: light) {
+	:root {
+		color: #213547;
+		background-color: #e9b7b7;
+	}
+	a:hover {
+		color: #747bff;
+	}
+	button {
+		background-color: #f9f9f9;
+	}
+
+	.App header {
+		background-color: #aaacda;
+	}
+
+	.overview {
+		background-color: #d8ca8d;
+
+		p {
+			color: #213547;
+		}
+	}
+
+	.info {
+		background-color: #d88db9;
+	}
 }

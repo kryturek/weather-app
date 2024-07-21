@@ -6,7 +6,7 @@ import {
 	Autocomplete,
 } from "@react-google-maps/api";
 import "./App.css";
-import { mapStyles } from "./mapStyles";
+import { darkMapStyles, lightMapStyles } from "./mapStyles";
 
 function convertTimestamptoTime(unixTimestamp, timezone) {
 	let dateObj = new Date((unixTimestamp + timezone) * 1000);
@@ -46,6 +46,7 @@ function App() {
 	const [input, setInput] = useState("");
 	const [autocomplete, setAutocomplete] = useState(null);
 	// const [arrayOfSearches, setArrayOfSearches] = useState([]);
+	const [isDark, setIsDark] = useState(true);
 
 	const inputRef = useRef();
 
@@ -54,6 +55,11 @@ function App() {
 			autocomplete.addListener("place_changed", handlePlaceChanged);
 		}
 	}, [autocomplete]);
+
+	useEffect(() => {
+		setIsDark(window.matchMedia("(prefers-color-scheme: dark)").matches);
+		console.log(isDark);
+	}, []);
 
 	function handleKeyDown(event) {
 		if (event.key === "Enter") {
@@ -291,7 +297,7 @@ function App() {
 							center={{ lat: weather.coord.lat, lng: weather.coord.lon }}
 							zoom={10}
 							options={{
-								styles: mapStyles,
+								styles: isDark ? darkMapStyles : lightMapStyles,
 								disableDefaultUI: true,
 							}}
 						>
