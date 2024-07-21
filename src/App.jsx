@@ -135,7 +135,7 @@ function App() {
 			<header>
 				<h1>Weather App</h1>
 				<form onSubmit={processLocation}>
-					{isLoaded && (
+					{isLoaded ? (
 						<Autocomplete
 							onLoad={onLoad}
 							options={{
@@ -151,6 +151,8 @@ function App() {
 								onKeyDown={handleKeyDown}
 							/>
 						</Autocomplete>
+					) : (
+						<div className="lds-dual-ring"></div>
 					)}
 					<button className="uselessButton" type="submit">
 						Search
@@ -234,8 +236,12 @@ function App() {
 						</div>
 						{isLoaded && (
 							<GoogleMap
+								className="map"
 								key={`${weather.coord.lat}-${weather.coord.lon}`}
-								mapContainerStyle={{ height: "400px", width: "100%" }}
+								mapContainerStyle={{
+									height: "400px",
+									width: "100%",
+								}}
 								center={{
 									lat: weather.coord.lat,
 									lng: weather.coord.lon,
@@ -259,6 +265,7 @@ function App() {
 					</div>
 				) : (
 					<div className="nothingEntered">
+						<div className="arrow"></div>
 						<div>
 							Start typing a city or locality in the search box and
 							choose it from the dropdown menu. That's it! You'll see the
