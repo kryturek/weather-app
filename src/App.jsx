@@ -192,7 +192,9 @@ function App() {
 							/>
 						</Autocomplete>
 					)}
-					<button type="submit">Search</button>
+					<button className="uselessButton" type="submit">
+						Search
+					</button>
 				</form>
 
 				{/* <div className="lastSearchedDiv">

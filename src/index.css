@@ -92,6 +92,10 @@ header {
 	}
 }
 
+.uselessButton {
+	display: none;
+}
+
 .weather {
 	display: flex;
 	justify-content: center;
