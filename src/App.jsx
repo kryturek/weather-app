@@ -7,6 +7,7 @@ import {
 } from "@react-google-maps/api";
 import "./App.css";
 import { darkMapStyles, lightMapStyles } from "./mapStyles";
+import getDynamicFontSize from "./getDynamicFontSize";
 
 function convertTimestamptoTime(unixTimestamp, timezone) {
 	let dateObj = new Date((unixTimestamp + timezone) * 1000);
@@ -45,7 +46,6 @@ function App() {
 	const [error, setError] = useState(null);
 	const [input, setInput] = useState("");
 	const [autocomplete, setAutocomplete] = useState(null);
-	// const [arrayOfSearches, setArrayOfSearches] = useState([]);
 	const [isDark, setIsDark] = useState(true);
 
 	const inputRef = useRef();
@@ -58,12 +58,12 @@ function App() {
 
 	useEffect(() => {
 		setIsDark(window.matchMedia("(prefers-color-scheme: dark)").matches);
-		console.log(isDark);
 	}, []);
 
 	function handleKeyDown(event) {
 		if (event.key === "Enter") {
 			event.preventDefault();
+			setLoading(true);
 			if (autocomplete) {
 				handlePlaceChanged();
 			}
@@ -87,17 +87,6 @@ function App() {
 			setCountry(country);
 			setState(state);
 			fetchWeatherData(lat, lon, place.name);
-
-			setArrayOfSearches((prevArray) => {
-				const newArray = [
-					{ place: place.name, country, lat, lon },
-					...prevArray,
-				];
-				if (newArray.length > 3) {
-					newArray.pop();
-				}
-				return newArray;
-			});
 		}
 	};
 
@@ -156,20 +145,6 @@ function App() {
 		setAutocomplete(autocompleteInstance);
 	};
 
-	function getDynamicFontSize(str) {
-		const smolSize = 24;
-		const midSize = 36;
-		const maxSize = 48;
-
-		if (str.length <= 10) {
-			return `${maxSize}px`;
-		} else if (str.length <= 18) {
-			return `${midSize}px`;
-		} else {
-			return `${smolSize}px`;
-		}
-	}
-
 	return (
 		<div className="App">
 			<header>
@@ -196,27 +171,6 @@ function App() {
 						Search
 					</button>
 				</form>
-
-				{/* <div className="lastSearchedDiv">
-					{arrayOfSearches.length > 1 && (
-						<span className="lastSearched">
-							Previous searches:{" "}
-							{arrayOfSearches.slice(1, 3).map((search, index) => (
-								<span key={index}>
-									{index > 0 && ", "}
-									<a
-										href="#"
-										onClick={() =>
-											processLocation(undefined, search.place)
-										}
-									>
-										{search.place}
-									</a>
-								</span>
-							))}
-						</span>
-					)}
-				</div> */}
 			</header>
 
 			{loading ? (
