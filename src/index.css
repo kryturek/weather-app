@@ -264,7 +264,7 @@ main {
 
 footer {
 	background-image: linear-gradient(to bottom, #213547, #192c3e);
-	padding-block: 1rem;
+	/* padding-block: 1rem; */
 	width: 100vw;
 	display: flex;
 	justify-content: space-between;
