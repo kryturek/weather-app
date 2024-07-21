@@ -173,104 +173,141 @@ function App() {
 				</form>
 			</header>
 
-			{loading ? (
-				<div className="weather weatherLoading">
-					<div className="lds-dual-ring"></div>
-				</div>
-			) : error ? (
-				<p>{error}</p>
-			) : weather.main ? (
-				<div className="weather">
-					<div className="overview">
-						<div className="overviewLocation">
-							<p
-								className="locationInfo li-name"
-								style={{
-									fontSize: getDynamicFontSize(location),
-								}}
-							>
-								{location}
-							</p>
+			<main>
+				{loading ? (
+					<div className="weather weatherLoading">
+						<div className="lds-dual-ring"></div>
+					</div>
+				) : error ? (
+					<p>{error}</p>
+				) : weather.main ? (
+					<div className="weather">
+						<div className="overview">
+							<div className="overviewLocation">
+								<p
+									className="locationInfo li-name"
+									style={{
+										fontSize: getDynamicFontSize(location),
+									}}
+								>
+									{location}
+								</p>
 
-							<div className="stateAndCountry">
-								<p className="locationInfo">
-									{state}, {country}
+								<div className="stateAndCountry">
+									<p className="locationInfo">
+										{state}, {country}
+									</p>
+								</div>
+							</div>
+							<img
+								className="weatherIcon"
+								src={`/icons/${weather.weather[0].icon}.png`}
+								alt=""
+							/>
+							<p className="temperatureInfo">
+								{Math.round(weather.main.temp)}°C
+							</p>
+						</div>
+						<div className="info">
+							<div className="geo">
+								<p>
+									{`${Math.abs(
+										Math.round(weather.coord.lat * 100) / 100
+									)}`}
+									{weather.coord.lat >= 0 ? "°N" : "°S"}
+								</p>
+								<p>
+									{`${Math.abs(
+										Math.round(weather.coord.lon * 100) / 100
+									)}`}
+									{weather.coord.lat >= 0 ? "°E" : "°W"}
 								</p>
 							</div>
-						</div>
-						<img
-							className="weatherIcon"
-							src={`/icons/${weather.weather[0].icon}.png`}
-							alt=""
-						/>
-						<p className="temperatureInfo">
-							{Math.round(weather.main.temp)}°C
-						</p>
-					</div>
-					<div className="info">
-						<div className="geo">
+							<p>Feels like {Math.round(weather.main.feels_like)}°C</p>
 							<p>
-								{`${Math.abs(
-									Math.round(weather.coord.lat * 100) / 100
-								)}`}
-								{weather.coord.lat >= 0 ? "°N" : "°S"}
+								{weather.weather[0].main} (
+								{weather.weather[0].description})
 							</p>
 							<p>
-								{`${Math.abs(
-									Math.round(weather.coord.lon * 100) / 100
-								)}`}
-								{weather.coord.lat >= 0 ? "°E" : "°W"}
+								Current time:{" "}
+								{convertTimestamptoTime(weather.dt, weather.timezone)}
+							</p>
+							<p>
+								Sunset:{" "}
+								{convertTimestamptoTime(
+									weather.sys.sunset,
+									weather.timezone
+								)}
+							</p>
+							<p>
+								Sunrise:{" "}
+								{convertTimestamptoTime(
+									weather.sys.sunrise,
+									weather.timezone
+								)}
 							</p>
 						</div>
-						<p>Feels like {Math.round(weather.main.feels_like)}°C</p>
-						<p>
-							{weather.weather[0].main} ({weather.weather[0].description}
-							)
-						</p>
-						<p>
-							Current time:{" "}
-							{convertTimestamptoTime(weather.dt, weather.timezone)}
-						</p>
-						<p>
-							Sunset:{" "}
-							{convertTimestamptoTime(
-								weather.sys.sunset,
-								weather.timezone
-							)}
-						</p>
-						<p>
-							Sunrise:{" "}
-							{convertTimestamptoTime(
-								weather.sys.sunrise,
-								weather.timezone
-							)}
-						</p>
-					</div>
-					{isLoaded && (
-						<GoogleMap
-							key={`${weather.coord.lat}-${weather.coord.lon}`}
-							mapContainerStyle={{ height: "400px", width: "100%" }}
-							center={{ lat: weather.coord.lat, lng: weather.coord.lon }}
-							zoom={10}
-							options={{
-								styles: isDark ? darkMapStyles : lightMapStyles,
-								disableDefaultUI: true,
-							}}
-						>
-							<Marker
-								position={{
+						{isLoaded && (
+							<GoogleMap
+								key={`${weather.coord.lat}-${weather.coord.lon}`}
+								mapContainerStyle={{ height: "400px", width: "100%" }}
+								center={{
 									lat: weather.coord.lat,
 									lng: weather.coord.lon,
 								}}
-								visible={true}
-								zIndex={100}
-							/>
-						</GoogleMap>
-					)}
+								zoom={10}
+								options={{
+									styles: isDark ? darkMapStyles : lightMapStyles,
+									disableDefaultUI: true,
+								}}
+							>
+								<Marker
+									position={{
+										lat: weather.coord.lat,
+										lng: weather.coord.lon,
+									}}
+									visible={true}
+									zIndex={100}
+								/>
+							</GoogleMap>
+						)}
+					</div>
+				) : (
+					<div className="nothingEntered">
+						<div>
+							Start typing a city or locality in the search box and
+							choose it from the dropdown menu. That's it! You'll see the
+							current weather and a map of your chosen location.
+						</div>
+					</div>
+				)}
+			</main>
+			<footer>
+				<div className="tag">
+					<p>Krys Turek</p>
 				</div>
-			) : (
-				<p></p>
-			)}
+				<div className="links">
+					<ul>
+						<li>
+							<a href="https://github.com/kryturek" target="_blank">
+								<img src="/github-icon.png" alt="my github page" />
+								{/* https://www.flaticon.com/authors/pixel-perfect */}
+							</a>
+						</li>
+						<li>
+							<a
+								href="https://portfolio-omega-flax.vercel.app/"
+								target="_blank"
+							>
+								<img
+									src="/portfolio-icon.png"
+									alt="my portfolio page"
+								/>
+							</a>
+						</li>
+					</ul>
+				</div>
+			</footer>
 		</div>
 	);
 }

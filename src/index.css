@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Kristi&display=swap");
+
 :root {
 	font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
 	line-height: 1.5;
@@ -31,8 +33,9 @@ body {
 }
 
 h1 {
-	font-size: 3.2em;
-	line-height: 1.1;
+	font-size: 5.6rem;
+	line-height: 1;
+	font-family: Kristi, Haettenschweiler, "Arial Narrow Bold", sans-serif;
 }
 
 button {
@@ -83,8 +86,8 @@ form input {
 }
 
 header {
-	background-color: #213547;
-	padding: 3rem 0;
+	background-image: linear-gradient(to top, #213547, #192c3e);
+	padding-block: 1rem 2rem;
 	width: 100vw;
 
 	@media (min-width: 800px) {
@@ -244,6 +247,60 @@ header {
 	padding-top: 8rem;
 }
 
+main {
+	flex-grow: 1;
+	width: 100%;
+
+	@media (min-width: 800px) {
+		width: min(70vw, 1000px);
+	}
+}
+
+.nothingEntered {
+	margin: 3rem auto;
+	width: max(300px, 60%);
+	/* border: 1px black solid; */
+}
+
+footer {
+	background-image: linear-gradient(to bottom, #213547, #192c3e);
+	padding-block: 1rem;
+	width: 100vw;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+
+	@media (min-width: 800px) {
+		width: min(70vw, 1000px);
+	}
+}
+
+.tag {
+	margin-left: 2rem;
+	font-family: Kristi, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+	font-size: 2rem;
+}
+
+.links {
+	display: flex;
+	/* border: 2px black solid; */
+	/* justify-content: center; */
+	margin-inline: 1.6rem;
+}
+
+.links ul {
+	/* border: 2px black dotted; */
+	list-style: none;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 1.6rem;
+}
+
+.links img {
+	width: 40px;
+}
+
 @media (prefers-color-scheme: light) {
 	:root {
 		color: #213547;
@@ -257,7 +314,11 @@ header {
 	}
 
 	.App header {
-		background-color: #aaacda;
+		background-image: linear-gradient(to top, #aaacda, #9092c4);
+	}
+
+	footer {
+		background-image: linear-gradient(to bottom, #aaacda, #9092c4);
 	}
 
 	.overview {
