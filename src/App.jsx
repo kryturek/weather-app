@@ -42,6 +42,12 @@ function App() {
 	}, [autocomplete]);
 
 	useEffect(() => {
+		if (inputRef.current) {
+			inputRef.current.focus();
+		}
+	}, [inputRef]);
+
+	useEffect(() => {
 		setIsDark(window.matchMedia("(prefers-color-scheme: dark)").matches);
 	}, []);
 
