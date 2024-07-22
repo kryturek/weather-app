@@ -115,7 +115,9 @@ header {
 }
 
 .overview {
-	background-color: #1a1a1a;
+	/* background-color: #1a1a1a; */
+	/* background-color: #3c185350; */
+	background-image: linear-gradient(to bottom, #3c185350, #3c185300);
 	/* padding: 1rem 2rem; */
 	width: 100%;
 	height: 400px;
