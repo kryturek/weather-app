@@ -83,6 +83,7 @@ form * {
 form input {
 	padding-block: 1rem;
 	text-align: center;
+	font-size: 16px; /* important to be at least 16px to avoid zooming in when input is tapped on mobile */
 }
 
 header {
