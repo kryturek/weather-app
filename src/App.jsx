@@ -267,9 +267,14 @@ function App() {
 					<div className="nothingEntered">
 						<div className="arrow"></div>
 						<div>
-							Start typing a city or locality in the search box and
-							choose it from the dropdown menu. That's it! You'll see the
-							current weather and a map of your chosen location.
+							<p>
+								Start typing a city or locality in the search box and
+								choose it from the dropdown menu. That's it!{" "}
+							</p>
+							<p>
+								You'll see the current weather and a map of your chosen
+								location.
+							</p>
 						</div>
 					</div>
 				)}

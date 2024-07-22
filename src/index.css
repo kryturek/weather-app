@@ -287,7 +287,12 @@ main {
 .nothingEntered {
 	margin: 3rem auto;
 	width: max(300px, 60%);
-	/* border: 1px black solid; */
+	color: rgb(137, 151, 156);
+	display: flex;
+}
+
+.nothingEntered div:last-child {
+	gap: 1rem;
 }
 
 footer {
@@ -363,5 +368,9 @@ footer {
 
 	.info {
 		background-color: #d88db9;
+	}
+
+	.nothingEntered {
+		color: rgb(55, 58, 59);
 	}
 }
