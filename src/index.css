@@ -362,19 +362,30 @@ footer {
 	}
 
 	.overview {
-		background-color: #d8ca8d;
+		/* background-color: #d8ca8d; */
+		background-image: linear-gradient(to bottom, #ab31af80, #64311d49);
 
 		p {
 			color: #213547;
 		}
 
 		@media (min-width: 800px) {
-			border: 15px rgb(88, 142, 167) solid;
+			border: 15px #9a51a39a solid;
 		}
 	}
 
 	.info {
-		background-color: #d88db9;
+		background-color: #d8d08d;
+		color: #333;
+	}
+
+	.geo {
+		border-bottom: #4e414146 2px solid;
+		color: #5e5e5e;
+
+		@media (min-width: 800px) {
+			border: #4e414146 2px solid;
+		}
 	}
 
 	.nothingEntered {
