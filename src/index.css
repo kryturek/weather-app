@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Kristi&display=swap");
+@import "leaflet/dist/leaflet.css";
 
 :root {
 	font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
@@ -89,6 +90,50 @@ form input {
 	text-align: center;
 	font-size: 16px; /* important to be at least 16px to avoid zooming in when input is tapped on mobile */
 }
+
+/* Base styles for the suggestions dropdown */
+.suggestions-dropdown {
+	/* width: 100%; */
+	/* max-width: 400px; */
+	margin: 0.5rem auto;
+	padding: 0.5rem;
+	font-size: 1rem;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	background: #fff;
+	color: #333;
+	transition: border-color 0.2s ease-in-out;
+	outline: none;
+	/* Remove default arrow styling */
+	appearance: none;
+	-moz-appearance: none;
+	-webkit-appearance: none;
+  }
+  
+  /* Focus state */
+  .suggestions-dropdown:focus {
+	border-color: #646cff;
+  }
+  
+  /* Option styling (note: native styling for <option> is limited) */
+  .suggestions-dropdown option {
+	padding: 1rem;
+	background: inherit;
+	color: inherit;
+  }
+
+  .suggestions-dropdown option:hover {
+	padding: 4rem;
+	background: black;
+	color: inherit;
+  }
+  
+  /* Dark theme overrides */
+  .App.dark .suggestions-dropdown {
+	background: #2b2b2b;
+	border-color: #555;
+	color: #f9f9f9;
+  }
 
 header {
 	background-image: linear-gradient(to top, #213547, #192c3e);
