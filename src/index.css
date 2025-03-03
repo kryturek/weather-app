@@ -20,6 +20,18 @@
 	--lg-breakpoint: 1100px;
 }
 
+/* When light theme is active */
+:root[data-theme="light"] {
+	--bg-color: #e9b7b7;
+	--text-color: #333;
+  }
+  
+  /* When dark theme is active */
+  :root[data-theme="dark"] {
+	--bg-color: #242424;
+	--text-color: #f0f0f0;
+  }
+
 a {
 	font-weight: 500;
 	color: #646cff;
@@ -66,7 +78,73 @@ button:focus-visible {
 	display: flex;
 	flex-direction: column;
 	min-height: 100vh;
+	transition: background-color 0.3s, color 0.3s;
 }
+
+/* Light theme styles */
+  .App.light {
+	background-color: #e9b7b7;
+	color: #333;
+  }
+
+  .App.light header {
+	background-image: linear-gradient(to top, #aaacda, #9092c4);
+  }
+  
+  /* Dark theme styles */
+  .App.dark {
+	background-color: #242424;
+	color: #f0f0f0;
+  }
+
+  .App.dark header {
+	background-image: linear-gradient(to top, #213547, #192c3e);
+  }
+
+  .App.dark .overview {
+	background-image: linear-gradient(to bottom, #3c185350, #3c185300);
+  }
+
+  .App.dark .info {
+	background-color: #2032416e;
+	border-color: white;
+  }
+
+  .App.dark .geo {
+	border: #ddd 2px solid;
+  }
+
+  .App.dark footer {
+	background-image: linear-gradient(to bottom, #213547, #192c3e);
+  }
+  
+  /* Make sure headings, text, etc. also switch color properly */
+  .App.dark h1,
+  .App.dark p,
+  .App.dark label,
+  .App.dark button {
+	color: #f0f0f0;
+  }
+
+  /* Move the theme toggle to top-left corner */
+.theme-toggle {
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+
+  /* Basic styling */
+  background-color: transparent;
+  border: 2px solid currentColor;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+/* A quick hover effect for the theme toggle */
+.theme-toggle:hover {
+	background-color: rgba(255, 255, 255, 0.1);
+  }
 
 form {
 	display: flex;
@@ -97,44 +175,37 @@ form input {
 	width: 100%;
   }
   
-  /* 2. The suggestions list itself (absolutely positioned). */
-  .suggestions-list {
+  /* For the suggestions list in light vs. dark mode */
+.suggestions-list {
 	position: absolute;
-	top: calc(100% + 2px); /* or "top: 100%" plus a little offset if you like */
+	top: calc(100% + 2px);
 	left: 0;
 	right: 0;
   
 	list-style-type: none;
 	margin: 0;
 	padding: 0;
-	z-index: 999; /* Make sure it's above other elements */
+	z-index: 999;
   
 	background-color: #fff;
 	border: 1px solid #ccc;
 	border-radius: 4px;
-  
-	/* If you want a max height with scrolling: */
 	max-height: 200px;
 	overflow-y: auto;
-  
-	/* You can add a subtle box shadow to look more modern: */
 	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
   }
   
-  /* 3. Each suggestion item. */
   .suggestions-list li {
-	padding: 0.75rem 1rem;
+	padding-block: 0.75rem;
 	cursor: pointer;
-	font-size: 1rem;
 	color: #333;
   }
   
-  /* 4. Hover state for each item. */
   .suggestions-list li:hover {
 	background-color: #e6e6e6;
   }
   
-  /* 5. Dark theme overrides (assuming .App.dark is the root in dark mode). */
+  /* Dark mode overrides for suggestions */
   .App.dark .suggestions-list {
 	background-color: #2b2b2b;
 	border-color: #555;
@@ -151,6 +222,7 @@ header {
 	background-image: linear-gradient(to top, #213547, #192c3e);
 	padding-block: 1rem 2rem;
 	width: 100vw;
+	position: relative;
 
 	@media (min-width: 800px) {
 		width: min(var(--base-vw), var(--max-width));
