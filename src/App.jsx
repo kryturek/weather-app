@@ -5,7 +5,6 @@ import "./App.css";
 import getDynamicFontSize from "./getDynamicFontSize";
 import convertTimestamptoTime from "./convertTimestampToTime";
 
-// Component to update the map view when the center changes
 function ChangeMapView({ center }) {
   const map = useMap();
   useEffect(() => {
@@ -17,11 +16,9 @@ function ChangeMapView({ center }) {
 }
 
 function App() {
-  // API keys and endpoints
-  const api = {
-    key: import.meta.env.VITE_WEATHER_API_KEY,
-    baseurlweather: "https://api.openweathermap.org/data/2.5/weather?",
-  };
+  const [input, setInput] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   const [location, setLocation] = useState("");
   const [stateName, setStateName] = useState("");
@@ -29,8 +26,7 @@ function App() {
   const [weather, setWeather] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [input, setInput] = useState("");
-  const [suggestions, setSuggestions] = useState([]);
+
   const [isDark, setIsDark] = useState(true);
 
   const inputRef = useRef();
@@ -42,12 +38,12 @@ function App() {
     }
   }, []);
 
-  // Set dark/light mode based on system preference.
+  // Match user’s system preference for dark mode on initial load
   useEffect(() => {
     setIsDark(window.matchMedia("(prefers-color-scheme: dark)").matches);
   }, []);
 
-  // Fetch autocomplete suggestions from Open-Meteo Geocoding API (debounced).
+  // Fetch suggestions (debounced)
   useEffect(() => {
     const timer = setTimeout(() => {
       if (input && input.length > 2) {
@@ -60,8 +56,10 @@ function App() {
           .then((data) => {
             if (data && data.results) {
               setSuggestions(data.results);
+              setShowSuggestions(true);
             } else {
               setSuggestions([]);
+              setShowSuggestions(false);
             }
           })
           .catch((err) => {
@@ -69,24 +67,24 @@ function App() {
           });
       } else {
         setSuggestions([]);
+        setShowSuggestions(false);
       }
     }, 300);
     return () => clearTimeout(timer);
   }, [input]);
 
-  // Called when the user selects a suggestion.
   function handleSuggestionClick(suggestion) {
     setInput(suggestion.name);
     setLocation(suggestion.name);
     setStateName(suggestion.admin1 || "");
     setCountry(suggestion.country || "");
     setSuggestions([]);
+    setShowSuggestions(false);
     fetchWeatherData(suggestion.latitude, suggestion.longitude, suggestion.name);
   }
 
-  // On form submission, use the first suggestion (if any).
-  function processLocation(ev) {
-    ev.preventDefault();
+  function processLocation(e) {
+    e.preventDefault();
     setLoading(true);
     setError(null);
     setWeather({});
@@ -102,10 +100,9 @@ function App() {
     }
   }
 
-  // If the user presses Enter, use the first suggestion.
-  function handleKeyDown(event) {
-    if (event.key === "Enter") {
-      event.preventDefault();
+  function handleKeyDown(e) {
+    if (e.key === "Enter") {
+      e.preventDefault();
       setLoading(true);
       if (suggestions && suggestions.length > 0) {
         handleSuggestionClick(suggestions[0]);
@@ -116,11 +113,11 @@ function App() {
     }
   }
 
-  // Fetch weather data from OpenWeatherMap.
   function fetchWeatherData(lat, lon, locationName) {
-    fetch(
-      `${api.baseurlweather}lat=${lat}&lon=${lon}&units=metric&appid=${api.key}`
-    )
+    const weatherApiKey = import.meta.env.VITE_WEATHER_API_KEY;
+    const baseurlweather = "https://api.openweathermap.org/data/2.5/weather?";
+
+    fetch(`${baseurlweather}lat=${lat}&lon=${lon}&units=metric&appid=${weatherApiKey}`)
       .then((res) => res.json())
       .then((data) => {
         if (data.cod === "404") {
@@ -145,43 +142,48 @@ function App() {
         <h1>Weather App</h1>
         <div className="top-controls">
           <form onSubmit={processLocation}>
-            <input
-              ref={inputRef}
-              type="text"
-              placeholder="Enter location!"
-              value={input}
-              onChange={(ev) => setInput(ev.target.value)}
-              onKeyDown={handleKeyDown}
-            />
+            <div className="input-wrapper">
+              <input
+                ref={inputRef}
+                type="text"
+                placeholder="Enter location!"
+                value={input}
+                onChange={(ev) => setInput(ev.target.value)}
+                onKeyDown={handleKeyDown}
+                onFocus={() => setShowSuggestions(suggestions.length > 0)}
+                onBlur={() => {
+                  // Delay hiding suggestions so clicks can register
+                  setTimeout(() => setShowSuggestions(false), 150);
+                }}
+              />
+              {showSuggestions && suggestions.length > 0 && (
+                <ul className="suggestions-list">
+                  {suggestions.map((suggestion) => (
+                    <li
+                      key={`${suggestion.latitude}-${suggestion.longitude}`}
+                      onClick={() => handleSuggestionClick(suggestion)}
+                    >
+                      {suggestion.name}
+                      {suggestion.admin1 ? `, ${suggestion.admin1}` : ""},{" "}
+                      {suggestion.country}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
             <button className="uselessButton" type="submit">
               Search
             </button>
-
-			        {/* Dropdown autocomplete suggestions */}
-					{suggestions && suggestions.length > 0 && (
-          <select
-            className="suggestions-dropdown"
-            onChange={(e) => {
-              const selectedIndex = e.target.selectedIndex;
-              if (selectedIndex >= 0) {
-                handleSuggestionClick(suggestions[selectedIndex]);
-              }
-            }}
-            size={suggestions.length > 3 ? 3 : suggestions.length} // shows up to 3 options at once
-          >
-            {suggestions.map((suggestion) => (
-              <option
-                value={suggestion.name}
-                key={`${suggestion.latitude}-${suggestion.longitude}`}
-              >
-                {suggestion.name}
-                {suggestion.admin1 ? `, ${suggestion.admin1}` : ""}, {suggestion.country}
-              </option>
-            ))}
-          </select>
-        )}
           </form>
-		  </div>
+
+          {/* Moved the theme-toggle button out of the normal flow */}
+          <button
+            className="theme-toggle"
+            onClick={() => setIsDark((prev) => !prev)}
+          >
+            {isDark ? "Light Theme" : "Dark Theme"}
+          </button>
+        </div>
       </header>
 
       <main>
@@ -233,8 +235,7 @@ function App() {
               </div>
               <p>Feels like {Math.round(weather.main.feels_like)}°C</p>
               <p>
-                {weather.weather[0].main} (
-                {weather.weather[0].description})
+                {weather.weather[0].main} ({weather.weather[0].description})
               </p>
               <p>
                 Current time:{" "}
@@ -249,11 +250,12 @@ function App() {
                 {convertTimestamptoTime(weather.sys.sunrise, weather.timezone)}
               </p>
             </div>
-            {/* Leaflet map with updated center */}
+            {/* Leaflet map with updated center & no zoom controls */}
             <MapContainer
               center={[weather.coord.lat, weather.coord.lon]}
               zoom={10}
               style={{ height: "400px", width: "100%" }}
+              zoomControl={false}
             >
               <TileLayer
                 url={
