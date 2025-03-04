@@ -267,12 +267,16 @@ function App() {
                     ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
                     : "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 }
+				opacity={isDark ? 0.86 : 1}
                 attribution={
                   isDark
                     ? "&copy; <a href='https://carto.com/attributions'>CARTO</a>"
                     : "&copy; OpenStreetMap contributors"
                 }
               />
+								  <TileLayer
+									  url={isDark ? "https://{s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}{r}.png" : ""}
+								  />
               <Marker position={[weather.coord.lat, weather.coord.lon]}>
                 <Popup>{location}</Popup>
               </Marker>
