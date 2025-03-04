@@ -43,6 +43,10 @@ function App() {
     setIsDark(window.matchMedia("(prefers-color-scheme: dark)").matches);
   }, []);
 
+  useEffect(() => {
+	document.body.style.backgroundColor = isDark ? "#1a1a1a" : "#dab2aa";
+  }, [isDark]);
+
   // Fetch suggestions (debounced)
   useEffect(() => {
     const timer = setTimeout(() => {
